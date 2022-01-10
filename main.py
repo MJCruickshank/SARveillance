@@ -1,32 +1,20 @@
 import os
 import sys
 import ee
+import sys
 import geemap as gee
 from geemap import cartoee
 import pandas as pd
 from utils import new_get_image_collection_gif
 
-# from flask import Flask
-# from flask_cors import CORS
-
-# #################################################
-# # Flask Setup
-# #################################################
-# app = Flask(__name__)
-# CORS(app)
-
-# #################################################
-# # Flask Routes
-# #################################################
-
-# @app.route("/")
-# def welcome():
-#     return (
-#         f"SARveillance: Generate SAR time series for OSINT investigations<br/>")
+base_name = sys.argv[1]
+start_date= sys.argv[2]
+end_date = sys.argv[3] 
+outpath = sys.argv[4]
 
 class SAREXPLORER():
   scale_bar_dict1 = {
-      "length": 10, 
+      "length": 1, 
       "xy": (0.1, 0.05), 
       "linewidth": 3,
       "fontsize": 20,
@@ -143,9 +131,7 @@ class SAREXPLORER():
 
   def create_imagery(self):
     base_name_list = self.bases['Name'].tolist()
-    # print(base_name_list)
-    for base in base_name_list:
-      self.generate_timeseries_gif(base, "2021-12-01", "2022-01-09", self.outpath)
+    self.generate_timeseries_gif(base_name, start_date, end_date, outpath)
 
 if __name__ == '__main__':
   cartoee.get_image_collection_gif = new_get_image_collection_gif
