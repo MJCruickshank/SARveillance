@@ -6,6 +6,7 @@ dependencies:
   - conda-forge::cartopy
   - conda-forge::openblas
   - pip:
+    - geos
     - scipy
     - numpy==1.22.0
     - pyproj==3.2.1
