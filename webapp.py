@@ -90,9 +90,13 @@ class SAREXPLORER():
     minmax = col_filtered.first().reduceRegion(ee.Reducer.minMax(), aoi)
     max = minmax.getNumber("VV_max").getInfo()
     min = minmax.getNumber("VV_min").getInfo()
-    base_gdf = self.bases.loc[self.bases.Name == base_name]
-    lat = base_gdf.iloc[0]["lat"]
-    lon = base_gdf.iloc[0]["lon"]
+    if base_name == "Custom Location":
+      lat = float(custom_lat)
+      lon = float(custom_lon)
+    else:
+      base_gdf = self.bases.loc[self.bases.Name == base_name]
+      lat = base_gdf.iloc[0]["lat"]
+      lon = base_gdf.iloc[0]["lon"]
     w = 0.4
     h = 0.4
     region = [lon+w, lat-h, lon-w, lat+h]
