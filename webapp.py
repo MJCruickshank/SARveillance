@@ -157,7 +157,7 @@ if __name__ == '__main__':
   st.write('You selected:', base_name)
   if base_name == "Custom Location":
     custom_lat = st.text_input('Select Latitude', '')
-    custom_lon = st.text_input('Select Latitude', '')
+    custom_lon = st.text_input('Select Longitude', '')
   start_date= st.text_input('Start Date - use format YYYY-MM-DD', '2021-11-01')
   end_date = st.text_input('End Date - use format YYYY-MM-DD', '2022-01-10')
   cartoee.get_image_collection_gif = new_get_image_collection_gif
