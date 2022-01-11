@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import sys
+import datetime
 import ee
 import sys
 import base64
@@ -162,8 +163,15 @@ if __name__ == '__main__':
   if base_name == "Custom Location":
     custom_lat = st.text_input('Select Latitude', '')
     custom_lon = st.text_input('Select Longitude', '')
-  start_date= st.text_input('Start Date - use format YYYY-MM-DD', '2021-11-01')
-  end_date = st.text_input('End Date - use format YYYY-MM-DD', '2022-01-10')
+  # start_date= st.text_input('Start Date - use format YYYY-MM-DD', '2021-11-01')
+  # end_date = st.text_input('End Date - use format YYYY-MM-DD', '2022-01-10')
+  # initialize start date as 7 days ago and end date as today
+  today = datetime.date.today()
+  lastweek = (today - datetime.timedelta(days=7))
+  start_date = st.date_input('Start Date', lastweek)
+  end_date = st.date_input('End Date', today)
+  start_date = start_date.isoformat()
+  end_date = end_date.isoformat()
   cartoee.get_image_collection_gif = new_get_image_collection_gif
   sar = SAREXPLORER()
   if st.button('Generate SAR Timeseries'):
