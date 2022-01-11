@@ -12,15 +12,23 @@ Generates a time lapse GIF of the Sentinel-1 satellite images for the location a
 - **Python 3.9** 
 - **conda**: The installation script that installs the dependencies needs to use both conda and pip to fetch the required dependencies, so please use conda and create a new conda virtual environment.
 
-### Installing Packages
+### Installing Package Dependencies
+
+Create the conda environment. This will install all necessary package dependencies too.
 
 ```shell
-bash install_requirements.sh
+conda env create -f environment.yml
 ```
 
 ## To Run
 
-Running the `main.py` script will generate the time lapse GIF for the location and date range specified.
+1. Activate the conda environment created.
+
+```shell
+conda activate SARveillance-conda-env
+```
+
+2. Run the `main.py` script. This will generate the time lapse GIF for the location and date range specified and save it to the output folder specified.
 
 ```shell
 python main.py selected_base_name selected_start_date selected_end_date output_foldername
