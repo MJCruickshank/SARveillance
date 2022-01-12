@@ -46,7 +46,7 @@ class SAREXPLORER():
     self.show_download()
 
   def auth(self):
-    ee.Authenticate()
+    ee.data.authenticateViaPopup()
     ee.Initialize()
 
   def get_bases(self):
