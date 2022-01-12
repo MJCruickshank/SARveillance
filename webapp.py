@@ -47,7 +47,7 @@ class SAREXPLORER():
 
   def auth(self):
     self.gee.ee.Authenticate()
-    self.gee.ee_initialize()
+    self.gee.ee.Initialize()
 
   def get_bases(self):
     self.bases = pd.read_csv("bases_df.csv")
