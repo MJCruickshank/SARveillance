@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import sys
-import ee
+#import ee
 import sys
 import base64
 import geemap as gee
@@ -46,7 +46,7 @@ class SAREXPLORER():
     self.show_download()
 
   def auth(self):
-    # self.gee.ee.Authenticate()
+    #self.gee.ee.Authenticate()
     self.gee.ee_initialize()
 
   def get_bases(self):
