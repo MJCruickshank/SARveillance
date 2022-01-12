@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import os
 import datetime
 import ee
@@ -8,6 +9,8 @@ import geemap as gee
 from geemap import cartoee
 import pandas as pd
 from utils import new_get_image_collection_gif
+
+from map import map_component
 
 class SAREXPLORER():
 
@@ -55,7 +58,10 @@ class SAREXPLORER():
         'lon': poi_data['lon'].values[0]
       }
     elif type == 'custom':
-      if not lat.isnumeric() or not lon.isnumeric():
+      try:
+        float(lat)
+        float(lon)
+      except ValueError:
         st.error('Latitude & Longitude must be numeric values!')
         st.stop()
       self.poi = {
@@ -84,12 +90,25 @@ class SAREXPLORER():
     poi = st.selectbox('Which location would you like to examine?', poi_list)
     # custom poi
     with st.expander("Custom Location"):
-      # st.map(data=None, zoom=None, use_container_width=True)
+      def run_component():
+        return map_component(key='map')
       col_lat, col_lon = st.columns(2)
       with col_lat:
-        lat = st.text_input('Select Latitude', '')
+        lat_input = st.empty()
+        lat = lat_input.text_input('Select Latitude', '')
       with col_lon:
-        lon = st.text_input('Select Longitude', '')
+        lon_input = st.empty()
+        lon = lon_input.text_input('Select Longitude', '')
+      def handle_event(value):
+          if value:
+            lat = lat_input.text_input('Select Latitude', value=value[0])
+            lon = lon_input.text_input('Select Longitude', value=value[1])
+            return (lat, lon)
+      coords = handle_event(run_component())
+      if coords != None:
+        (lat, lon) = coords
+        # print(lat, type(lat))
+        # print(lon, type(lon))
     # date picker for start & end date
     today = datetime.date.today()
     lastweek = (today - datetime.timedelta(days=7))
