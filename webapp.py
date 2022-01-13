@@ -47,10 +47,9 @@ class SAREXPLORER():
     self.show_download()
 
   def auth(self):
-    os.system("earthengine authenticate")
-    os.system("1//09Z7gwdM-bRySCgYIARAAGAkSNwF-L9IrG29NmkNTKEEIibiR92k-W3vLtD9HDmAGzufEcH6pk_-PAUzcPzl2_jYvTGSH0kQ_WRE")
     # ee.Authenticate()
-    ee.Initialize()
+    self.gee.ee_initialize()
+    os.system("1//09Z7gwdM-bRySCgYIARAAGAkSNwF-L9IrG29NmkNTKEEIibiR92k-W3vLtD9HDmAGzufEcH6pk_-PAUzcPzl2_jYvTGSH0kQ_WRE")
 
   def get_bases(self):
     self.bases = pd.read_csv("bases_df.csv")
