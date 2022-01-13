@@ -138,6 +138,8 @@ class SAREXPLORER():
     self.generate_timeseries_gif(base_name, start_date, end_date, self.outpath)
 
   def display_gif(self):
+    if base_name == "Custom Location":
+      base_name = custom_location_name
     gif_loc = os.path.expanduser(self.outpath+"BaseTimeseries/"+base_name+"/"+base_name + ".gif")
     file_ = open(gif_loc, "rb")
     contents = file_.read()
@@ -148,6 +150,8 @@ class SAREXPLORER():
     unsafe_allow_html=True)
 
   def show_download(self):
+    if base_name == "Custom Location":
+      base_name = custom_location_name
     gif_loc = os.path.expanduser(self.outpath+"BaseTimeseries/"+base_name+"/"+base_name + ".gif")
     with open(gif_loc, "rb") as file:
       btn = st.download_button(
