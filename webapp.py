@@ -1,47 +1,34 @@
 import streamlit as st
-import streamlit.components.v1 as components
 import os
 import datetime
-import ee
-import sys
 import base64
 import geemap as gee
-from geemap import cartoee
 import pandas as pd
-from utils import new_get_image_collection_gif
-import imagery
-
+from imagery import Imagery
 from map import map_component
 
-class SARVEILLANCE():
+# page config
+st.set_page_config(page_title="SARveillance", page_icon="🛰️")
 
-  north_arrow_dict1 = {
-      "text": "N",
-      "xy": (0.1, 0.3),
-      "arrow_length": 0.15,
-      "text_color": "white",
-      "arrow_color": "white",
-      "fontsize": 20,
-      "width": 5,
-      "headwidth": 15,
-      "ha": "center",
-      "va": "center"
-      }
+class SARVEILLANCE():
 
   def __init__(self):
     self.gee = gee
     self.bases = []
     self.poi = None
+    self.imagery = None
     self.col_final = None
     self.dirname = os.path.dirname(__file__)
     self.outpath = self.dirname+"/Data/"
+    self.max_frames=1
 
   def run(self):
-    self.auth()
+    self.setup_gee()
     self.load_bases()
+    self.init_imagery()
     self.init_gui()
 
-  def auth(self):
+  def setup_gee(self):
     # self.gee.ee.Authenticate()
     self.gee.ee_initialize()
 
@@ -49,14 +36,19 @@ class SARVEILLANCE():
     # load csv data with places of interest
     self.bases = pd.read_csv("bases_df.csv")
 
+  def init_imagery(self):
+    self.imagery = Imagery(self.outpath)
+    self.imagery.get_collection()
 
-  def create_poi(self, type, name, lat=None, lon=None):
+  def create_poi(self, type, name, start_date, end_date, lat=None, lon=None):
     if type == 'preset':
       poi_data = self.bases.loc[self.bases['Name'] == name]
       self.poi = {
         'name': name,
         'lat': poi_data['lat'].values[0],
-        'lon': poi_data['lon'].values[0]
+        'lon': poi_data['lon'].values[0],
+        'start_date': start_date,
+        'end_date': end_date
       }
     elif type == 'custom':
       try:
@@ -68,7 +60,9 @@ class SARVEILLANCE():
       self.poi = {
         'name': name,
         'lat': float(lat),
-        'lon': float(lon)
+        'lon': float(lon),
+        'start_date': start_date,
+        'end_date': end_date
       }
     else:
       st.error('Error')
@@ -89,39 +83,27 @@ class SARVEILLANCE():
     st.title('SARveillance')
     st.subheader('Sentinel-1 SAR time series analysis for OSINT use')
 
-    # create a form, so streamlit doesn't rerun on every change
-    # NOTE: conflicts with custom component and its return value (coordinate picker)
-    # form = st.form("sarveillance")
-
-    # if 'poi_select' not in st.session_state:
-    #   st.session_state.poi_select = 0
-
     # preset poi select (form element)
-    poi = st.selectbox('Which location would you like to examine?', poi_list, key='poi_select')
+    preset_name = st.selectbox('Which location would you like to examine?', poi_list, key='poi_select')
 
-    # expander with a map to pick coordinates and enter a name
+    # expander with a map to pick coordinates and to enter a custom name
     with st.expander("Custom Location (overrides a selected location)"):
-      def run_component():
-        return map_component(key='map')
+      # columns with inputs for name, lat & lon
       col_custom_name, col_lat, col_lon = st.columns(3)
       with col_custom_name:
-        custom_name = st.text_input('Location name', '', placeholder='Enter a custom name')
+        custom_name = st.text_input('Location name', '', placeholder='custom name')
       with col_lat:
         lat_input = st.empty()
-        lat = lat_input.text_input('Select Latitude', '', placeholder='Enter latitude')
+        lat = lat_input.text_input('Latitude (enter or click map)', '', placeholder='latitude')
       with col_lon:
         lon_input = st.empty()
-        lon = lon_input.text_input('Select Longitude', '', placeholder='Enter longitude')
-      def handle_event(value):
-          if value:
-            lat = lat_input.text_input('Select Latitude', value=value[0])
-            lon = lon_input.text_input('Select Longitude', value=value[1])
-            return (lat, lon)
-      coords = handle_event(run_component())
-      if coords != None:
-        (lat, lon) = coords
-        print(lat, type(lat))
-        print(lon, type(lon))
+        lon = lon_input.text_input('Longitude (enter or click map)', '', placeholder='longitude')
+
+      # call map component and watch for return values
+      coordinates = map_component(key='map')
+      if coordinates:
+        lat = lat_input.text_input('Select Latitude', value=coordinates[0])
+        lon = lon_input.text_input('Select Longitude', value=coordinates[1])
 
     # date picker for start & end date (form element)
     today = datetime.date.today()
@@ -131,44 +113,44 @@ class SARVEILLANCE():
       start_date = st.date_input('Start Date', lastweek)
     with col_end_date:
       end_date = st.date_input('End Date', today)
-    # format the dates and set as class variables
-    self.start_date = start_date.isoformat()
-    self.end_date = end_date.isoformat()
+    # format the dates and set class variables
+    start_date = start_date.isoformat()
+    end_date = end_date.isoformat()
 
     # on submit
     if st.button('Generate SAR Timeseries'):
+
+      # if we have a custom name & coordinates
+      # or if we have a preset name
+      # create a poi object
       if custom_name != '' and lat != '' and lon != '':
-        self.create_poi('custom', custom_name, lat, lon)
-      elif poi != None and poi != '---':
-        self.create_poi('preset', poi)
+        self.create_poi('custom', custom_name, start_date, end_date, lat, lon)
+      elif preset_name != None and preset_name != '---':
+        self.create_poi('preset', preset_name, start_date, end_date)
       else:
         st.error('Choose a location first!')
         st.stop()
-      # we have a valid poi
+
+      # display info box
       st.info(f"Generating time series for {self.poi['name']} ({self.poi['lat']},{self.poi['lon']})")
 
-    # Submit
-    # if st.button('Generate SAR Timeseries'):
-    #   if lat != '' and lon != '':
-    #     self.create_poi('custom', 'Custom', lat, lon)
-    #   elif poi != None and poi != '---':
-    #     self.create_poi('preset', poi)
-    #   else:
-    #     st.error('Choose a location first!')
-    #     st.stop()
-    #   # we have a valid poi
-    #   st.info(f"Generating time series for {self.poi['name']} ({self.poi['lat']},{self.poi['lon']})")
-    #   self.generate()
+      # time to generate the images/gif
+      self.generate()
+
 
   def generate(self):
-    pass
-    # self.get_collection()
-    # with st.spinner('Loading timeseries... this may take a couple of minutes'):
-    #   self.generate_timeseries_gif()
-    # st.success('Done!')
-    # self.display_gif()
-    # self.show_download()
-  
+    with st.spinner('Loading timeseries... this may take a couple of minutes'):
+      self.imagery.set_poi(self.poi)
+      (err, msg) = self.imagery.generate_timeseries_gif(max_frames=self.max_frames)
+
+    if err:
+      st.error(msg)
+      st.stop()
+    else:
+      st.success('Done!')
+      self.display_gif()
+      self.show_download()
+
   def display_gif(self):
     # poi data
     base_name = self.poi['name']
