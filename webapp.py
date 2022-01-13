@@ -4,6 +4,7 @@ import sys
 import ee
 import sys
 import base64
+import glob
 import geemap as gee
 from geemap import cartoee
 import pandas as pd
@@ -118,6 +119,10 @@ class SAREXPLORER():
     'framesPerSecond': 2,
     'region': aoi,
     'crs': "EPSG:4326"}
+    folder = os.path.expanduser(outpath+"BaseTimeseries/"+base_name+"/")
+    files = glob.glob(folder)
+    for f in files:
+      os.remove(f)
     return cartoee.get_image_collection_gif(
       ee_ic = col_filtered, #.sort("system:time_start"),
       out_dir = os.path.expanduser(outpath+"BaseTimeseries/"+base_name+"/"),
