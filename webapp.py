@@ -94,6 +94,7 @@ class SAREXPLORER():
     if base_name == "Custom Location":
       lat = float(custom_lat)
       lon = float(custom_lon)
+      base_name = custom_location_name
     else:
       base_gdf = self.bases.loc[self.bases.Name == base_name]
       lat = base_gdf.iloc[0]["lat"]
@@ -163,6 +164,7 @@ if __name__ == '__main__':
   if base_name == "Custom Location":
     custom_lat = st.text_input('Select Latitude', '')
     custom_lon = st.text_input('Select Longitude', '')
+    custom_location_name = st.text_input('Input custom location name', '')
   start_date= st.text_input('Start Date - use format YYYY-MM-DD', '2021-11-01')
   end_date = st.text_input('End Date - use format YYYY-MM-DD', '2022-01-10')
   cartoee.get_image_collection_gif = new_get_image_collection_gif
