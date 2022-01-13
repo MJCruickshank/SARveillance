@@ -56,7 +56,6 @@ class SAREXPLORER():
     self.show_download()
 
   def auth(self):
-    ee.Authenticate()
     subprocess = subprocess.Popen(ee.Authenticate(), shell=True, stdout=subprocess.PIPE)
     st.write('First follow the authentication instructions:', subprocess_return)
     authentication_code = st.text_input('Input your Google Earth Engine authentication code here:', '')
