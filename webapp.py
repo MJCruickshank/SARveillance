@@ -119,7 +119,7 @@ class SAREXPLORER():
     'framesPerSecond': 2,
     'region': aoi,
     'crs': "EPSG:4326"}
-    folder = os.path.expanduser(outpath+"BaseTimeseries/"+base_name+"/")
+    folder = os.path.expanduser(outpath+"BaseTimeseries/"+base_name+"/*")
     files = glob.glob(folder)
     for f in files:
       os.remove(f)
