@@ -113,7 +113,7 @@ class SAREXPLORER():
     'dimensions': 500,
     'framesPerSecond': 2,
     'region': aoi,
-    'crs': "EPSG:32637"}
+    'crs': "EPSG:4326"}
     return cartoee.get_image_collection_gif(
       ee_ic = col_filtered, #.sort("system:time_start"),
       out_dir = os.path.expanduser(outpath+"BaseTimeseries/"+base_name+"/"),
