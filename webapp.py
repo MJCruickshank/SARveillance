@@ -9,14 +9,12 @@ from geemap import cartoee
 import pandas as pd
 from utils import new_get_image_collection_gif
 
-
-st.title('SARveillance')
-st.subheader('Sentinel-1 SAR time series analysis for OSINT use')
 st.set_page_config(
      page_title="SARveillance",
      page_icon="🛰️"
      )
-
+st.title('SARveillance')
+st.subheader('Sentinel-1 SAR time series analysis for OSINT use')
 
 class SAREXPLORER():
 
