@@ -66,7 +66,9 @@ class SAREXPLORER():
     return image.addBands(vh_vv)
 
   def generate_base_aoi(self, base_name):
+    print(base_name)
     base_name_list = self.bases['Name'].tolist()
+    print(base_name_list)
     if base_name in base_name_list == False:
       latitude = custom_lat
       longitude = custom_lon
@@ -134,7 +136,6 @@ class SAREXPLORER():
     )
 
   def create_imagery(self):
-    base_name_list = self.bases['Name'].tolist()
     self.generate_timeseries_gif(base_name, start_date, end_date, self.outpath)
 
   def display_gif(self):
