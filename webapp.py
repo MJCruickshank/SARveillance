@@ -49,7 +49,6 @@ class SAREXPLORER():
   def auth(self):
     # ee.Authenticate()
     self.gee.ee_initialize()
-    os.system("1//09Z7gwdM-bRySCgYIARAAGAkSNwF-L9IrG29NmkNTKEEIibiR92k-W3vLtD9HDmAGzufEcH6pk_-PAUzcPzl2_jYvTGSH0kQ_WRE")
 
   def get_bases(self):
     self.bases = pd.read_csv("bases_df.csv")
@@ -166,7 +165,6 @@ if __name__ == '__main__':
     custom_lon = st.text_input('Select Longitude', '')
   start_date= st.text_input('Start Date - use format YYYY-MM-DD', '2021-11-01')
   end_date = st.text_input('End Date - use format YYYY-MM-DD', '2022-01-10')
-  auth_input = st.text_input('GEE Auth Data', " ")
   cartoee.get_image_collection_gif = new_get_image_collection_gif
   sar = SAREXPLORER()
   if st.button('Generate SAR Timeseries'):
