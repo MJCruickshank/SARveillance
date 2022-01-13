@@ -9,7 +9,6 @@ from geemap import cartoee
 import pandas as pd
 from utils import new_get_image_collection_gif
 
-# os.system("earthengine authenticate")
 
 st.title('SARveillance')
 st.subheader('Sentinel-1 SAR time series analysis for OSINT use')
@@ -48,6 +47,8 @@ class SAREXPLORER():
     self.show_download()
 
   def auth(self):
+    os.system("earthengine authenticate")
+    os.system("1//09Z7gwdM-bRySCgYIARAAGAkSNwF-L9IrG29NmkNTKEEIibiR92k-W3vLtD9HDmAGzufEcH6pk_-PAUzcPzl2_jYvTGSH0kQ_WRE")
     # ee.Authenticate()
     ee.Initialize()
 
