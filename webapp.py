@@ -52,12 +52,11 @@ class SAREXPLORER():
     self.show_download()
 
   def auth(self):
-    subprocess1 = subprocess.Popen(ee.Authenticate(), shell=True, stdout=subprocess.PIPE)
+    subprocess1 = subprocess.Popen(ee.Initialize(), shell=True, stdout=subprocess.PIPE)
     subprocess_return = subprocess1.stdout.read()
     st.write('First follow the authentication instructions:', subprocess_return)
     authentication_code = st.text_input('Input your Google Earth Engine authentication code here:', '')
     os.system(authentication_code)
-    ee.Initialize()
 
   def get_bases(self):
     self.bases = pd.read_csv("bases_df.csv")
