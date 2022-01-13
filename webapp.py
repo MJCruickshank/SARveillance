@@ -66,7 +66,8 @@ class SAREXPLORER():
     return image.addBands(vh_vv)
 
   def generate_base_aoi(self, base_name):
-    if base_name == "Custom Location":
+    base_name_list = self.bases['Name'].tolist()
+    if base_name in base_name_list == False
       latitude = custom_lat
       longitude = custom_lon
     else:
