@@ -17,8 +17,7 @@ st.set_page_config(
      )
 st.title('SARveillance')
 st.subheader('Sentinel-1 SAR time series analysis for OSINT use')
-
-subprocess = subprocess.Popen("earthengine authenticate", shell=True, stdout=subprocess.PIPE)
+subprocess = subprocess.Popen(ee.Authenticate(), shell=True, stdout=subprocess.PIPE)
 subprocess_return = subprocess.stdout.read()
 st.write('First follow the authentication instructions:', subprocess_return)
 authentication_code = st.text_input('Input your Google Earth Engine authentication code here:', '')
