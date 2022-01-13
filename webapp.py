@@ -67,7 +67,7 @@ class SAREXPLORER():
 
   def generate_base_aoi(self, base_name):
     base_name_list = self.bases['Name'].tolist()
-    if base_name in base_name_list == False
+    if base_name in base_name_list == False:
       latitude = custom_lat
       longitude = custom_lon
     else:
