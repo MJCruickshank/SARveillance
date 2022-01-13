@@ -17,10 +17,8 @@ class SARVEILLANCE():
     self.bases = []
     self.poi = None
     self.imagery = None
-    self.col_final = None
-    self.dirname = os.path.dirname(__file__)
-    self.outpath = self.dirname+"/Data/"
-    self.max_frames=1
+    self.outpath = os.path.join(__file__, '/Data/')
+    self.max_frames=20
 
   def run(self):
     self.setup_gee()
