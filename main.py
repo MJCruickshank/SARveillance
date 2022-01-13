@@ -13,16 +13,6 @@ end_date = sys.argv[3]
 outpath = sys.argv[4]
 
 class SAREXPLORER():
-  scale_bar_dict1 = {
-      "length": 1, 
-      "xy": (0.1, 0.05), 
-      "linewidth": 3,
-      "fontsize": 20,
-      "color": "black",
-      "unit": "km",
-      "ha": "center",
-      "va": "bottom"
-      }
 
   north_arrow_dict1 = {
       "text": "N",
