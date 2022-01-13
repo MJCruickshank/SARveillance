@@ -66,12 +66,11 @@ class SAREXPLORER():
     return image.addBands(vh_vv)
 
   def generate_base_aoi(self, base_name):
-    print(base_name)
     base_name_list = self.bases['Name'].tolist()
-    print(base_name_list)
     if base_name in base_name_list == False:
       latitude = custom_lat
       longitude = custom_lon
+
     else:
       base_gdf = self.bases.loc[self.bases.Name == base_name]
       latitude = base_gdf.iloc[0]["lat"]
@@ -166,6 +165,7 @@ if __name__ == '__main__':
     custom_lat = st.text_input('Select Latitude', '')
     custom_lon = st.text_input('Select Longitude', '')
     custom_location_name = st.text_input('Input custom location name', '')
+    st.write('Time series will be generated for:', base_name)
     base_name = custom_location_name
   start_date= st.text_input('Start Date - use format YYYY-MM-DD', '2021-11-01')
   end_date = st.text_input('End Date - use format YYYY-MM-DD', '2022-01-10')
