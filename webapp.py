@@ -56,10 +56,10 @@ class SAREXPLORER():
     self.show_download()
 
   def auth(self):
-    # ee.Authenticate()
-    self.gee.ee_initialize()
+    ee.Authenticate()
     authentication_code = st.text_input('Input your Google Earth Engine authentication code here:', '')
     os.system(authentication_code)
+    self.gee.ee_initialize()
 
   def get_bases(self):
     self.bases = pd.read_csv("bases_df.csv")
