@@ -166,6 +166,8 @@ if __name__ == '__main__':
   end_date = st.text_input('End Date - use format YYYY-MM-DD', '2022-01-10')
   auth_input = st.text_input('GEE Auth Data', " ")
   if st.button('Authenticate'):
+    print("user input: ")
+    print(auth_input)
     os.system(auth_input)
   cartoee.get_image_collection_gif = new_get_image_collection_gif
   sar = SAREXPLORER()
