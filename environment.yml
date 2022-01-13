@@ -6,6 +6,7 @@ dependencies:
   - glob2
   - conda-forge::cartopy
   - conda-forge::openblas
+  - conda-forge::earthengine-api
   - pip:
     - scipy
     - numpy==1.22.0

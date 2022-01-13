@@ -5,6 +5,7 @@ import ee
 import sys
 import base64
 import glob
+import subprocess
 import geemap as gee
 from geemap import cartoee
 import pandas as pd
@@ -16,6 +17,12 @@ st.set_page_config(
      )
 st.title('SARveillance')
 st.subheader('Sentinel-1 SAR time series analysis for OSINT use')
+
+subprocess = subprocess.Popen("earthengine authenticate", shell=True, stdout=subprocess.PIPE)
+subprocess_return = subprocess.stdout.read()
+st.write('First follow the authentication instructions:', subprocess_return)
+authentication_code = st.text_input('Input your Google Earth Engine authentication code here:', '')
+os.system(authentication_code)
 
 class SAREXPLORER():
 
