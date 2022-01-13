@@ -66,7 +66,6 @@ class SAREXPLORER():
     return image.addBands(vh_vv)
 
   def generate_base_aoi(self, base_name):
-    st.write('Current base_name is:', base_name)
     base_name_list = self.bases['Name'].tolist()
     if base_name not in base_name_list:
       latitude = custom_lat
@@ -93,7 +92,7 @@ class SAREXPLORER():
     minmax = col_filtered.first().reduceRegion(ee.Reducer.minMax(), aoi)
     max = minmax.getNumber("VV_max").getInfo()
     min = minmax.getNumber("VV_min").getInfo()
-    if base_name == "Custom Location":
+    if base_name not in base_name_list:
       lat = float(custom_lat)
       lon = float(custom_lon)
     else:
