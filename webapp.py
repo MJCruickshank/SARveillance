@@ -9,10 +9,11 @@ import geemap as gee
 from geemap import cartoee
 import pandas as pd
 from utils import new_get_image_collection_gif
+import imagery
 
 from map import map_component
 
-class SAREXPLORER():
+class SARVEILLANCE():
 
   north_arrow_dict1 = {
       "text": "N",
@@ -79,6 +80,7 @@ class SAREXPLORER():
   def init_gui(self):
     # load custom css
     self.load_custom_css()
+
     # prepare initial form data
     poi_list = self.bases['Name'].tolist()
     poi_list.insert(0, '---')
@@ -86,19 +88,30 @@ class SAREXPLORER():
     # header
     st.title('SARveillance')
     st.subheader('Sentinel-1 SAR time series analysis for OSINT use')
-    # preset poi select
-    poi = st.selectbox('Which location would you like to examine?', poi_list)
-    # custom poi
-    with st.expander("Custom Location"):
+
+    # create a form, so streamlit doesn't rerun on every change
+    # NOTE: conflicts with custom component and its return value (coordinate picker)
+    # form = st.form("sarveillance")
+
+    # if 'poi_select' not in st.session_state:
+    #   st.session_state.poi_select = 0
+
+    # preset poi select (form element)
+    poi = st.selectbox('Which location would you like to examine?', poi_list, key='poi_select')
+
+    # expander with a map to pick coordinates and enter a name
+    with st.expander("Custom Location (overrides a selected location)"):
       def run_component():
         return map_component(key='map')
-      col_lat, col_lon = st.columns(2)
+      col_custom_name, col_lat, col_lon = st.columns(3)
+      with col_custom_name:
+        custom_name = st.text_input('Location name', '', placeholder='Enter a custom name')
       with col_lat:
         lat_input = st.empty()
-        lat = lat_input.text_input('Select Latitude', '')
+        lat = lat_input.text_input('Select Latitude', '', placeholder='Enter latitude')
       with col_lon:
         lon_input = st.empty()
-        lon = lon_input.text_input('Select Longitude', '')
+        lon = lon_input.text_input('Select Longitude', '', placeholder='Enter longitude')
       def handle_event(value):
           if value:
             lat = lat_input.text_input('Select Latitude', value=value[0])
@@ -107,9 +120,10 @@ class SAREXPLORER():
       coords = handle_event(run_component())
       if coords != None:
         (lat, lon) = coords
-        # print(lat, type(lat))
-        # print(lon, type(lon))
-    # date picker for start & end date
+        print(lat, type(lat))
+        print(lon, type(lon))
+
+    # date picker for start & end date (form element)
     today = datetime.date.today()
     lastweek = (today - datetime.timedelta(days=7))
     col_start_date, col_end_date = st.columns(2)
@@ -120,10 +134,11 @@ class SAREXPLORER():
     # format the dates and set as class variables
     self.start_date = start_date.isoformat()
     self.end_date = end_date.isoformat()
-    # Submit
-    if st.button('Generate SAR Timeseries', key="submit"):
-      if lat != '' and lon != '':
-        self.create_poi('custom', 'Custom', lat, lon)
+
+    # on submit
+    if st.button('Generate SAR Timeseries'):
+      if custom_name != '' and lat != '' and lon != '':
+        self.create_poi('custom', custom_name, lat, lon)
       elif poi != None and poi != '---':
         self.create_poi('preset', poi)
       else:
@@ -131,93 +146,32 @@ class SAREXPLORER():
         st.stop()
       # we have a valid poi
       st.info(f"Generating time series for {self.poi['name']} ({self.poi['lat']},{self.poi['lon']})")
-      self.generate()
+
+    # Submit
+    # if st.button('Generate SAR Timeseries'):
+    #   if lat != '' and lon != '':
+    #     self.create_poi('custom', 'Custom', lat, lon)
+    #   elif poi != None and poi != '---':
+    #     self.create_poi('preset', poi)
+    #   else:
+    #     st.error('Choose a location first!')
+    #     st.stop()
+    #   # we have a valid poi
+    #   st.info(f"Generating time series for {self.poi['name']} ({self.poi['lat']},{self.poi['lon']})")
+    #   self.generate()
 
   def generate(self):
-    self.get_collection()
-    with st.spinner('Loading timeseries... this may take a couple of minutes'):
-      self.generate_timeseries_gif()
-    st.success('Done!')
-    self.display_gif()
-    self.show_download()
+    pass
+    # self.get_collection()
+    # with st.spinner('Loading timeseries... this may take a couple of minutes'):
+    #   self.generate_timeseries_gif()
+    # st.success('Done!')
+    # self.display_gif()
+    # self.show_download()
   
-  def get_collection(self):
-    collection = ee.ImageCollection('COPERNICUS/S1_GRD')
-    collection_both = collection.filter(ee.Filter.listContains(
-        'transmitterReceiverPolarisation', 'VV')).filter(ee.Filter.eq('instrumentMode', 'IW'))
-    # composite_col = collection_both.map(lambda image: image.select(
-    #     "VH").subtract(image.select("VH")).rename("VH-VV"))
-    self.col_final = collection_both.map(self.band_adder)
-
-  def band_adder(self, image):
-    vh_vv = image.select("VH").subtract(image.select("VH")).rename("VH-VV")
-    return image.addBands(vh_vv)
-
-  def generate_base_aoi(self):
-    latitude = self.poi['lat']
-    longitude = self.poi['lon']
-    base_point = ee.Geometry.Point([float(longitude), float(latitude)])
-    base_buffer = base_point.buffer(3000)
-    return base_buffer.bounds()
-
-  def get_filtered_col(self, col, base_name):
-    base_aoi = self.generate_base_aoi()
-    filtered_col = col.filterBounds(base_aoi)
-    clipped_col = filtered_col.map(lambda image: image.clip(base_aoi))
-    return clipped_col
-
-  def generate_timeseries_gif(self):
-    # poi data
-    base_name = self.poi['name']
-    lat = self.poi['lat']
-    lon = self.poi['lon']
-    # prepare collection
-    self.get_collection()
-    # filter
-    col_final_recent = self.col_final.filterDate(self.start_date, self.end_date) 
-    col_filtered = self.get_filtered_col(col_final_recent, base_name).sort("system:time_start")
-    aoi = self.generate_base_aoi()
-    minmax = col_filtered.first().reduceRegion(ee.Reducer.minMax(), aoi)
-    max = minmax.getNumber("VV_max").getInfo()
-    min = minmax.getNumber("VV_min").getInfo()
-    w = 0.4
-    h = 0.4
-    region = [lon+w, lat-h, lon-w, lat+h]
-    out_dir = os.path.expanduser(self.outpath)
-    filename = base_name+".gif"
-    out_gif = os.path.join(out_dir, filename)
-    if not os.path.exists(out_dir):
-      os.makedirs(out_dir)
-    visParams = {
-    'bands': ['VV', 'VH', 'VH-VV'],
-    'min': min,
-    'max': max,
-    'dimensions': 500,
-    'framesPerSecond': 2,
-    'region': aoi,
-    'crs': "EPSG:32637"}
-    return cartoee.get_image_collection_gif(
-      ee_ic = col_filtered,
-      out_dir = os.path.expanduser(self.outpath+"BaseTimeseries/"+base_name+"/"),
-      out_gif = base_name + ".gif",
-      vis_params = visParams,
-      region = region,
-      fps = 2,
-      mp4 = False,
-      grid_interval = (0.2, 0.2),
-      plot_title = base_name,
-      date_format = 'YYYY-MM-dd',
-      fig_size = (10, 10),
-      dpi_plot = 100,
-      file_format = "png",
-      north_arrow_dict = self.north_arrow_dict1,
-      verbose = True,
-    )
-
   def display_gif(self):
     # poi data
     base_name = self.poi['name']
-
     gif_loc = os.path.expanduser(self.outpath+"BaseTimeseries/"+base_name+"/"+base_name + ".gif")
     file_ = open(gif_loc, "rb")
     contents = file_.read()
@@ -243,7 +197,7 @@ class SAREXPLORER():
 
 if __name__ == '__main__':
   # overwrite cartoee method 
-  cartoee.get_image_collection_gif = new_get_image_collection_gif
+  # cartoee.get_image_collection_gif = new_get_image_collection_gif
   # start a new class instance with the run() method
-  sar = SAREXPLORER()
+  sar = SARVEILLANCE()
   sar.run()
