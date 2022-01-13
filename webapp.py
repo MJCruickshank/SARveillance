@@ -94,7 +94,6 @@ class SAREXPLORER():
     if base_name == "Custom Location":
       lat = float(custom_lat)
       lon = float(custom_lon)
-      base_name = custom_location_name
     else:
       base_gdf = self.bases.loc[self.bases.Name == base_name]
       lat = base_gdf.iloc[0]["lat"]
@@ -138,8 +137,6 @@ class SAREXPLORER():
     self.generate_timeseries_gif(base_name, start_date, end_date, self.outpath)
 
   def display_gif(self):
-    if base_name == "Custom Location":
-      base_name = custom_location_name
     gif_loc = os.path.expanduser(self.outpath+"BaseTimeseries/"+base_name+"/"+base_name + ".gif")
     file_ = open(gif_loc, "rb")
     contents = file_.read()
@@ -150,8 +147,6 @@ class SAREXPLORER():
     unsafe_allow_html=True)
 
   def show_download(self):
-    if base_name == "Custom Location":
-      base_name = custom_location_name
     gif_loc = os.path.expanduser(self.outpath+"BaseTimeseries/"+base_name+"/"+base_name + ".gif")
     with open(gif_loc, "rb") as file:
       btn = st.download_button(
@@ -169,6 +164,7 @@ if __name__ == '__main__':
     custom_lat = st.text_input('Select Latitude', '')
     custom_lon = st.text_input('Select Longitude', '')
     custom_location_name = st.text_input('Input custom location name', '')
+    base_name = custom_location_name
   start_date= st.text_input('Start Date - use format YYYY-MM-DD', '2021-11-01')
   end_date = st.text_input('End Date - use format YYYY-MM-DD', '2022-01-10')
   cartoee.get_image_collection_gif = new_get_image_collection_gif
