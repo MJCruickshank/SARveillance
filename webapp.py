@@ -86,6 +86,7 @@ class SAREXPLORER():
     return clipped_col
 
   def generate_timeseries_gif(self, base_name, start_date, end_date, outpath):
+    base_name_list = self.bases['Name'].tolist()
     col_final_recent = self.col_final.filterDate(start_date, end_date) #.sort("system:time_start")
     col_filtered = self.get_filtered_col(col_final_recent, base_name).sort("system:time_start")
     aoi = self.generate_base_aoi(base_name)
