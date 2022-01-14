@@ -17,7 +17,7 @@ class SARVEILLANCE():
     self.bases = []
     self.poi = None
     self.imagery = None
-    self.outpath = os.path.join(__file__, '/Data/')
+    self.outpath = os.path.join(__file__, 'Data')
     self.max_frames=20
 
   def run(self):
