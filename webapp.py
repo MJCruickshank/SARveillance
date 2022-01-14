@@ -170,8 +170,8 @@ if __name__ == '__main__':
   base_name = st.selectbox('Which location would you like to examine?',('Custom Location','Lesnovka', 'Klintsy', 'Unecha', 'Klimovo Air Base', 'Yelnya', 'Kursk', 'Pogonovo training ground', 'Valuyki', 'Soloti', 'Opuk', 'Bakhchysarai', 'Novoozerne', 'Dzhankoi', 'Novorossiysk', 'Raevskaya'))
   st.write('You selected:', base_name)
   if base_name == "Custom Location":
-    custom_lat = st.text_input('Select Latitude', '')
-    custom_lon = st.text_input('Select Longitude', '')
+    custom_lat = st.text_input('Select Latitude - use decimal degrees', '')
+    custom_lon = st.text_input('Select Longitude - use decimal degrees', '')
     custom_location_name = st.text_input('Input custom location name', '')
     base_name = custom_location_name
     st.write('Time series will be generated for:', base_name)
