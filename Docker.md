@@ -15,7 +15,7 @@ docker build --no-cache --tag sarveillance .
 docker-compose -f .\docker-compose.auth.yml run --rm sarveillance bash
 ```
 
-This will show the auth url and lets you enter the authorization code. This will generate a credentials file on your host in the "earthengine" folder in the sarveillance folder.
+This will show the auth url and lets you enter the authorization code. Thereafter a credentials file will be generated on your host engine in the "SARveillance/earthengine" folder.
 
 3. now run the normal container
 
@@ -23,4 +23,4 @@ This will show the auth url and lets you enter the authorization code. This will
 docker-compose up
 ```
 
-You can now open your browser at localhost:8501. All generate images will be saved in the sarveillance folder under "data". You cn also edit your points of interests by changing the file /poi/poi_df.csv and restart the container.
+You can now open your browser at localhost:8501. All generate images will be saved under "SARveillance/data". You can also edit your points of interests by changing the file "SARveillance/poi/poi_df.csv" and refresh the browser.
