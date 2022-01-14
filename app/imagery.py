@@ -19,13 +19,16 @@ class Imagery():
       "va": "center"
       }
 
-  def __init__(self, outpath):
+  def __init__(self):
     cartoee.get_image_collection_gif = new_get_image_collection_gif
-    self.poi = None
-    self.outpath = outpath
+    self.poi = None    
 
-  def set_poi(self, poi):
+  def set_poi(self, poi, outpath):
     self.poi = poi
+    base_path = os.path.join(outpath, 'BaseTimeseries', self.poi['name'])
+    if not os.path.exists(base_path):
+      os.makedirs(base_path) 
+    self.outpath = base_path
 
   def get_collection(self):
     collection = ee.ImageCollection('COPERNICUS/S1_GRD')
@@ -51,8 +54,7 @@ class Imagery():
     return clipped_col
 
   def cleanup_poi_data(self):
-    folder = os.path.expanduser(self.outpath+"BaseTimeseries/"+self.poi['name']+"/*")
-    files = glob.glob(folder)
+    files = glob.glob(f'{self.outpath}/*')
     for f in files:
       os.remove(f)
 
@@ -75,11 +77,8 @@ class Imagery():
     region = [self.poi['lon']+w, self.poi['lat']-h, self.poi['lon']-w, self.poi['lat']+h]
     
     # out file stuff
-    out_dir = os.path.expanduser(self.outpath)
     filename = self.poi['name']+".gif"
-    out_gif = os.path.join(out_dir, filename)
-    if not os.path.exists(out_dir):
-      os.makedirs(out_dir)
+    out_gif = os.path.join(self.outpath, filename)
     
     # some gif params
     visParams = {
@@ -94,7 +93,7 @@ class Imagery():
     # get all images and create gif
     return cartoee.get_image_collection_gif(
       ee_ic = col_filtered,
-      out_dir = os.path.expanduser(self.outpath+"BaseTimeseries/"+self.poi['name']+"/"),
+      out_dir = self.outpath,
       out_gif = self.poi['name'] + ".gif",
       vis_params = visParams,
       region = region,

@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  sarveillance:
+    image: sarveillance
+    container_name: sarveillance
+    # build: .
+    entrypoint: /entrypoint.sh
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./app:/opt/sarveillance/app
+      - ./poi:/opt/sarveillance/poi      
+      - ./data:/opt/sarveillance/data
+      - ./earthengine/:/root/.config/earthengine/

@@ -17,7 +17,8 @@ class SARVEILLANCE():
     self.bases = []
     self.poi = None
     self.imagery = None
-    self.outpath = os.path.join(__file__, 'Data')
+    # ugly attempt to get the data folder path
+    self.outpath = os.path.abspath(os.path.join(__file__, '..', '..', 'data'))
     self.max_frames=20
 
   def run(self):
@@ -30,12 +31,13 @@ class SARVEILLANCE():
     # self.gee.ee.Authenticate()
     self.gee.ee_initialize()
 
+
   def load_bases(self):
     # load csv data with places of interest
-    self.bases = pd.read_csv("bases_df.csv")
+    self.bases = pd.read_csv("poi/poi_df.csv")
 
   def init_imagery(self):
-    self.imagery = Imagery(self.outpath)
+    self.imagery = Imagery()
     self.imagery.get_collection()
 
   def create_poi(self, type, name, start_date, end_date, lat=None, lon=None):
@@ -66,7 +68,7 @@ class SARVEILLANCE():
       st.error('Error')
 
   def load_custom_css(self):
-    with open('custom.css') as f:
+    with open('app/custom.css') as f:
       st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
   def init_gui(self):
@@ -133,7 +135,7 @@ class SARVEILLANCE():
 
   def generate(self):
     with st.spinner('Loading timeseries... this may take a couple of minutes'):
-      self.imagery.set_poi(self.poi)
+      self.imagery.set_poi(self.poi, self.outpath)
       (err, msg) = self.imagery.generate_timeseries_gif(max_frames=self.max_frames)
 
     if err:
@@ -147,7 +149,10 @@ class SARVEILLANCE():
   def display_gif(self):
     # poi data
     base_name = self.poi['name']
-    gif_loc = os.path.expanduser(self.outpath+"BaseTimeseries/"+base_name+"/"+base_name + ".gif")
+    base_path = os.path.join(self.outpath, 'BaseTimeseries', base_name)
+    if not os.path.exists(base_path):
+      os.makedirs(base_path)
+    gif_loc = f'{base_path}/{base_name}.gif'
     file_ = open(gif_loc, "rb")
     contents = file_.read()
     data_url = base64.b64encode(contents).decode("utf-8")
@@ -158,9 +163,12 @@ class SARVEILLANCE():
 
   def show_download(self):
     # poi data
-    base_name = self.poi['name']   
+    base_name = self.poi['name']  
+    base_path = os.path.join(self.outpath, 'BaseTimeseries', base_name)
+    if not os.path.exists(base_path):
+      os.makedirs(base_path) 
+    gif_loc = f'{base_path}/{base_name}.gif'
 
-    gif_loc = os.path.expanduser(self.outpath+"BaseTimeseries/"+base_name+"/"+base_name + ".gif")
     with open(gif_loc, "rb") as file:
       btn = st.download_button(
         label="Download image",
