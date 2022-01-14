@@ -115,25 +115,20 @@ class SARVEILLANCE():
     start_date = start_date.isoformat()
     end_date = end_date.isoformat()
 
-    # on submit
-    if st.button('Generate SAR Timeseries'):
+    if custom_name != '' and lat != '' and lon != '':
+      self.create_poi('custom', custom_name, start_date, end_date, lat, lon)
+    elif preset_name != None and preset_name != '---':
+      self.create_poi('preset', preset_name, start_date, end_date)
+    else:
+      st.error('Choose a location first!')
+      st.stop()
 
-      # if we have a custom name & coordinates
-      # or if we have a preset name
-      # create a poi object
-      if custom_name != '' and lat != '' and lon != '':
-        self.create_poi('custom', custom_name, start_date, end_date, lat, lon)
-      elif preset_name != None and preset_name != '---':
-        self.create_poi('preset', preset_name, start_date, end_date)
-      else:
-        st.error('Choose a location first!')
-        st.stop()
+    if self.poi:
+      st.markdown(f"<div class='st-ae st-af st-ag st-ah st-ai st-aj st-ak st-al st-am st-b8 st-ao st-ap st-aq st-ar st-as st-at st-au st-av st-aw st-ax st-ay st-az st-b9 st-b1 st-b2 st-b3 st-b4 st-b5 st-b6' style='flex-direction: column;'><h6>Location: {self.poi['name']}</h6>Coordinates: [{self.poi['lat']}, {self.poi['lon']}]<br />Timespan: {self.poi['start_date']} - {self.poi['end_date']}</div><br />", unsafe_allow_html=True)
 
-      # display info box
-      st.info(f"Generating time series for {self.poi['name']} ({self.poi['lat']},{self.poi['lon']})")
-
-      # time to generate the images/gif
-      self.generate()
+      # on submit
+      if st.button('Generate SAR Timeseries'):
+        self.generate()
 
 
   def generate(self):
