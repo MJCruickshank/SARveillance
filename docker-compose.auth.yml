@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  sarveillance:
+    image: sarveillance
+    container_name: sarveillance
+    stdin_open: true
+    tty: true
+    entrypoint: /entrypoint.auth.sh
+    # ports:
+    #   - "80:8501"
+    volumes:
+      - ./earthengine/:/root/.config/earthengine/

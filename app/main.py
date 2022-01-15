@@ -5,7 +5,7 @@ import sys
 import geemap as gee
 from geemap import cartoee
 import pandas as pd
-from utils import new_get_image_collection_gif
+from imagery_utils import new_get_image_collection_gif
 
 base_name = sys.argv[1]
 start_date= sys.argv[2]
