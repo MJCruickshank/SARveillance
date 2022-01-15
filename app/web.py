@@ -19,7 +19,7 @@ class SARVEILLANCE():
     self.imagery = None
     # ugly attempt to get the data folder path
     self.outpath = os.path.abspath(os.path.join(__file__, '..', '..', 'data'))
-    self.max_frames=20
+    self.max_frames=30
 
   def run(self):
     self.setup_gee()
