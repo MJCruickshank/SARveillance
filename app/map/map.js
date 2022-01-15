@@ -54,7 +54,7 @@ function notifyHost(data) {
 
 // custom component code
 (function () {
-  var map = L.map('map').setView([51.004, 37.111], 7);
+  var map = L.map('map').setView([51.004, 37.111], 5);
   // add the OpenStreetMap tiles
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
