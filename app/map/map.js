@@ -64,7 +64,7 @@ function notifyHost(data) {
   });
   // esri layer (sat)
   var esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+  attribution: 'Powered by <a href="https://www.esri.com/">Esri</a>'
   });
   // combine the layers
   var baseMaps = {
@@ -76,7 +76,7 @@ function notifyHost(data) {
   // add layer control (default: topright)
   L.control.layers(baseMaps).addTo(map);
   // show the scale bar on the lower left corner
-  L.control.scale({ imperial: true, metric: true }).addTo(map);
+  L.control.scale({ imperial: true, metric: true, position: 'bottomleft' }).addTo(map);
 
   var layerGroup = L.layerGroup().addTo(map);
 
