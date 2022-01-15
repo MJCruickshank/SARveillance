@@ -55,14 +55,28 @@ function notifyHost(data) {
 // custom component code
 (function () {
   var map = L.map('map').setView([51.004, 37.111], 5);
-  // add the OpenStreetMap tiles
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+  // osm layer (topo)
+  var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution:
       '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>',
-  }).addTo(map);
+  });
+  // esri layer (sat)
+  var esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Powered by <a href="https://www.esri.com/">Esri</a>'
+  });
+  // combine the layers
+  var baseMaps = {
+    "OpenStreetMap": osm,
+    "EsriWorldImagery": esri
+  };
+  // set default layer
+  osm.addTo(map);
+  // add layer control (default: topright)
+  L.control.layers(baseMaps).addTo(map);
   // show the scale bar on the lower left corner
-  L.control.scale({ imperial: true, metric: true }).addTo(map);
+  L.control.scale({ imperial: true, metric: true, position: 'bottomleft' }).addTo(map);
 
   var layerGroup = L.layerGroup().addTo(map);
 
