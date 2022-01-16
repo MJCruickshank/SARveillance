@@ -37,7 +37,7 @@ class Imagery():
     self.col_final = collection_both.map(self.band_adder)
 
   def band_adder(self, image):
-    vh_vv = image.select("VH").subtract(image.select("VH")).rename("VH-VV")
+    vh_vv = image.select("VH").subtract(image.select("VV")).rename("VH-VV")
     return image.addBands(vh_vv)
 
   def generate_base_aoi(self):
