@@ -70,8 +70,12 @@ class Imagery():
     # base aoi
     aoi = self.generate_base_aoi()
     minmax = col_filtered.first().reduceRegion(ee.Reducer.minMax(), aoi)
-    max = minmax.getNumber("VV_max").getInfo()
-    min = minmax.getNumber("VV_min").getInfo()
+    maxVV = minmax.getNumber("VV_max").getInfo()
+    minVV = minmax.getNumber("VV_min").getInfo()
+    maxVH = minmax.getNumber("VH_max").getInfo()
+    minVH = minmax.getNumber("VH_min").getInfo()
+    maxVH_VV = minmax.getNumber("VH-VV_max").getInfo()
+    minVH_VV = minmax.getNumber("VH-VV_min").getInfo()
     w = 0.4
     h = 0.4
     region = [self.poi['lon']+w, self.poi['lat']-h, self.poi['lon']-w, self.poi['lat']+h]
@@ -83,8 +87,8 @@ class Imagery():
     # some gif params
     visParams = {
     'bands': ['VV', 'VH', 'VH-VV'],
-    'min': min,
-    'max': max,
+    'min': [minVV, minVH, minVH_VV],
+    'max': [maxVV, maxVH, maxVH_VV],
     'dimensions': 500,
     'framesPerSecond': 2,
     'region': aoi,
