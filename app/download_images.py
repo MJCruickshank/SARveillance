@@ -7,6 +7,12 @@ import os
 import requests
 from time import time
 from multiprocessing.pool import ThreadPool
+import io
+from contextlib import redirect_stdout
+import json
+
+
+
 
 # ee.Authenticate()
 ee.Initialize()
@@ -30,7 +36,8 @@ class Downloader():
     # self.get_final_inputs(self.collection, self.geojson_path, self.start_date, self.end_date)
     self.get_image_ids(self.collection)
     self.get_download_urls(self.collection, self.image_ids)
-    self.run_url_reponses(self.url_dict)
+    # self.run_url_reponses(self.url_dict)
+    self.get_metadata_jsons(self.collection, self.image_ids)
 
 
   def band_adder(self, image):
@@ -122,6 +129,22 @@ class Downloader():
       print("file_name: " + file_name)
       print("url " + url)
       self.url_response(url, file_name)
+
+  def get_metadata_jsons(self, collection, image_ids):
+    for image_id in self.image_ids:
+      image = self.collection.filter(ee.Filter.eq("system:id", image_id)).first()
+      f = io.StringIO()
+      data = image.getInfo()
+      split_name = image_id.split("/")
+      filename = split_name[-1]
+      outdir = "/Users/michaelcruickshank/Documents/SARveillance/app/metadata/"
+      outpath = outdir+filename+".json"
+      with open(outpath, "w") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+
+
+
 
 if __name__ == '__main__':
   dwnld = Downloader()
